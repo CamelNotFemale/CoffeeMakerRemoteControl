@@ -1,6 +1,6 @@
 package com.github.camelnotfemale.coffeemakerremotecontrol.controllers;
 
-import com.github.camelnotfemale.coffeemakerremotecontrol.models.CoffeeType;
+import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.CoffeeType;
 import com.github.camelnotfemale.coffeemakerremotecontrol.services.CoffeeMachineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,20 +13,17 @@ public class CoffeeMakerRemoteController {
 
     @PostMapping("/start")
     public String start() {
-
-        return null;
+        return service.start();
     }
 
     @PostMapping("/stop")
     public String stop() {
-
-        return null;
+        return service.stop();
     }
 
     @PostMapping("/make")
     public String make(@RequestParam("coffee") CoffeeType coffeeType) {
-
-        return coffeeType.name();
+        return service.make(coffeeType);
     }
 
     @GetMapping

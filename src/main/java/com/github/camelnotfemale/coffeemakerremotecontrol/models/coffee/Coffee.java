@@ -1,4 +1,4 @@
-package com.github.camelnotfemale.coffeemakerremotecontrol.models;
+package com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee;
 
 import lombok.Getter;
 
