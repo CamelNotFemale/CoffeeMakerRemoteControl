@@ -2,9 +2,11 @@ package com.github.camelnotfemale.coffeemakerremotecontrol.models;
 
 import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.Coffee;
 import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.Ingredients;
+import com.github.camelnotfemale.coffeemakerremotecontrol.util.CustomLog;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -16,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 @Scope("singleton")
 @ToString
 @Getter
+@Slf4j
 public class CoffeeMachine {
     @ToString.Exclude
     @Getter(value = AccessLevel.PRIVATE)
@@ -39,6 +42,7 @@ public class CoffeeMachine {
         this.busy = false;
     }
 
+    @CustomLog
     public String turnOn() {
         if (executor != null) {
             return "Coffee machine is already on";
@@ -48,6 +52,7 @@ public class CoffeeMachine {
         return "Coffee machine turned on";
     }
 
+    @CustomLog
     public String turnOff() {
         if (executor == null) {
             return "Coffee machine is already off";
@@ -70,6 +75,7 @@ public class CoffeeMachine {
         return false;
     }
 
+    @CustomLog
     public String make(Coffee coffee) {
         if (executor == null || executor.isShutdown()) return "The coffee machine is off";
         if (busy) return "The coffee machine is already making coffee";
@@ -97,6 +103,7 @@ public class CoffeeMachine {
         this.beans -= coffee.getBeans();
     }
 
+    @CustomLog
     public String addIngredients(Ingredients ingredients) {
         if (busy) return "The coffee machine is already making coffee";
         synchronized (busy = true) {

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <springProperty name="driver" source="spring.datasource.driver-class-name"/>
+    <springProperty name="url" source="spring.datasource.url"/>
+    <springProperty name="user" source="spring.datasource.username"/>
+    <springProperty name="password" source="spring.datasource.password"/>
+
+    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+            <dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">
+                <driverClass>${driver}</driverClass>
+                <jdbcUrl>${url}</jdbcUrl>
+                <user>${user}</user>
+                <password>${password}</password>
+            </dataSource>
+        </connectionSource>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="DB"/>
+    </root>
+
+</configuration>
