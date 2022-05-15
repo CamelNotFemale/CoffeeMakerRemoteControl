@@ -1,6 +1,9 @@
 package com.github.camelnotfemale.coffeemakerremotecontrol.models;
 
 import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.Coffee;
+import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.Ingredients;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.ToString;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +15,17 @@ import java.util.concurrent.ExecutorService;
 @Component
 @Scope("singleton")
 @ToString
+@Getter
 public class CoffeeMachine {
+    @ToString.Exclude
+    @Getter(value = AccessLevel.PRIVATE)
     private final ObjectFactory<ExecutorService> executorsFactory;
 
     private int milk;
     private int water;
     private int beans;
     private volatile Boolean busy;
+    @ToString.Exclude
     private ExecutorService executor;
 
     public CoffeeMachine(ObjectFactory<ExecutorService> executorsFactory,
@@ -29,6 +36,7 @@ public class CoffeeMachine {
         this.milk = milk;
         this.water = water;
         this.beans = beans;
+        this.busy = false;
     }
 
     public String turnOn() {
@@ -65,8 +73,11 @@ public class CoffeeMachine {
     public String make(Coffee coffee) {
         if (executor == null || executor.isShutdown()) return "The coffee machine is off";
         if (busy) return "The coffee machine is already making coffee";
-        if (!isEnoughIngredients(coffee)) return String.format("Not enough ingredients for %s", coffee.getType());
         synchronized (busy = true) {
+            if (!isEnoughIngredients(coffee)) {
+                busy = false;
+                return String.format("Not enough ingredients for %s", coffee.getType());
+            }
             loadIngredients(coffee);
             executor.submit(() -> processing(coffee.getTimeToMake()));
             return String.format("The coffee machine started to make %s", coffee.getType());
@@ -84,5 +95,16 @@ public class CoffeeMachine {
         this.milk -= coffee.getMilk();
         this.water -= coffee.getWater();
         this.beans -= coffee.getBeans();
+    }
+
+    public String addIngredients(Ingredients ingredients) {
+        if (busy) return "The coffee machine is already making coffee";
+        synchronized (busy = true) {
+            this.milk += ingredients.getMilk();
+            this.water += ingredients.getWater();
+            this.beans += ingredients.getBeans();
+            executorsFactory.getObject().submit(() -> processing(10000));
+            return "Adding Ingredients";
+        }
     }
 }

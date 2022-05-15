@@ -3,6 +3,7 @@ package com.github.camelnotfemale.coffeemakerremotecontrol.services;
 import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.Coffee;
 import com.github.camelnotfemale.coffeemakerremotecontrol.models.CoffeeMachine;
 import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.CoffeeType;
+import com.github.camelnotfemale.coffeemakerremotecontrol.models.coffee.Ingredients;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,11 @@ public class CoffeeMachineService {
         return coffeeMachine.make(coffeeFactory.get(coffeeType));
     }
 
-    public String getInfo() {
-        return coffeeFactory + ", " + coffeeMachine;
+    public CoffeeMachine getInfo() {
+        return coffeeMachine;
+    }
+
+    public String loadIngredients(Ingredients ingredients) {
+        return coffeeMachine.addIngredients(ingredients);
     }
 }
